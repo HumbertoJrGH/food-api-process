@@ -53,23 +53,27 @@ export default async function List(req, res) {
 
 function validadeReq(minScoreNutri, scoreNutri, minScoreNova, scoreNova) {
 	let nutriV = false
-	let novaV = scoreNova >= minScoreNova
+	let novaV = true
+	if (minScoreNova)
+		novaV = scoreNova >= minScoreNovas
 
-	switch (minScoreNutri) {
-		case "A":
-			if (scoreNutri == "A") nutriV = true
-			break
-		case "B":
-			if (["A", "B"].includes(scoreNutri)) nutriV = true
-			break
-		case "C":
-			if (["A", "B", "C"].includes(scoreNutri)) nutriV = true
-			break
-		case "D":
-			if (["A", "B", "C", "D"].includes(scoreNutri)) nutriV = true
-			break
-		default: nutriV = true
-	}
+	if (minScoreNutri)
+		switch (minScoreNutri) {
+			case "A":
+				if (scoreNutri == "A") nutriV = true
+				break
+			case "B":
+				if (["A", "B"].includes(scoreNutri)) nutriV = true
+				break
+			case "C":
+				if (["A", "B", "C"].includes(scoreNutri)) nutriV = true
+				break
+			case "D":
+				if (["A", "B", "C", "D"].includes(scoreNutri)) nutriV = true
+				break
+			default: nutriV = true
+		}
+	else nutriV = true
 
 	return nutriV && novaV
 }
