@@ -47,12 +47,11 @@ export default async function List(req, res) {
 		result = products.filter(product => product.nova.score >= req.query.nova)
 	else if (req.query.nutrition)
 		result = products.filter(product => product.nutrition.score <= req.query.nutrition)
-	console.log("terminou a filtragem")
-	console.log(result)
+	else result = products
 
 	await browser.close()
 
-	res.json(result)
+	res.json(products)
 }
 
 function validadeReq(minScoreNutri, scoreNutri, minScoreNova, scoreNova) {
