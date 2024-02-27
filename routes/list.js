@@ -15,38 +15,43 @@ export default async function List(req, res) {
 	const products = await page.evaluate(() => {
 		const list = document.querySelectorAll("ul.search_results li")
 
-		return Array.from(list).filter((product) => {
+		return Array.from(list).map((product) => {
 			const id = product.querySelector("a").href.split("/")[4]
 			const name = product.querySelector(".list_product_name").innerText
 
 			const scoreNutrition = product.querySelector(".list_product_sc img.list_product_icons[title^='Nutri-Score']").title.split(" - ")[0].slice(-1)
 			const scoreNova = product.querySelector(".list_product_sc img.list_product_icons[title^='NOVA']").title.split(" - ")[0].slice(-1)
-			const nutrition = {}
-			const nova = {}
 
-			nutrition = {
+			const nutrition = {
 				score: product.querySelector(".list_product_sc img.list_product_icons[title^='Nutri-Score']").title.split(" - ")[0].length == 13
 					? product.querySelector(".list_product_sc img.list_product_icons[title^='Nutri-Score']").title.split(" - ")[0].slice(-1)
 					: product.querySelector(".list_product_sc img.list_product_icons[title^='Nutri-Score']").title.split(" - ")[0],
 				title: product.querySelector(".list_product_sc img.list_product_icons[title^='Nutri-Score']").title.split(" - ")[1]
 			}
 
-			nova = {
+			const nova = {
 				score: product.querySelector(".list_product_sc img.list_product_icons[title^='NOVA']").title.split(" - ")[0].length == 6
-					? product.querySelector(".list_product_sc img.list_product_icons[title^='NOVA']").title.split(" - ")[0].slice(-1)
+					? +product.querySelector(".list_product_sc img.list_product_icons[title^='NOVA']").title.split(" - ")[0].slice(-1)
 					: product.querySelector(".list_product_sc img.list_product_icons[title^='NOVA']").title.split(" - ")[0],
 				title: product.querySelector(".list_product_sc img.list_product_icons[title^='NOVA']").title.split(" - ")[1]
 			}
-
-			if (validadeReq(req.params.nutrition, scoreNutrition, req.params.nova, scoreNova))
-				return { id, name, nutrition, nova }
+			return { id, name, nutrition, nova }
 		})
 	})
 
 	console.log("terminou a captura")
+	const result = []
+	if (req.params.nova && req.params.nutrition)
+		result = products.filter(product => product.nova.score >= req.params.nova && product.nutrition.score <= req.params.nutrition)
+	else if (req.params.nova)
+		result = products.filter(product => product.nova.score >= req.params.nova)
+	else if (req.params.nutrition)
+		result = products.filter(product => product.nutrition.score <= req.params.nutrition)
+	console.log("terminou a filtragem")
 	console.log(products)
 
 	await browser.close()
+
 
 	res.json(products)
 }
