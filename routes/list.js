@@ -40,20 +40,19 @@ export default async function List(req, res) {
 	})
 
 	console.log("terminou a captura")
-	const result = []
-	if (req.params.nova && req.params.nutrition)
-		result = products.filter(product => product.nova.score >= req.params.nova && product.nutrition.score <= req.params.nutrition)
-	else if (req.params.nova)
-		result = products.filter(product => product.nova.score >= req.params.nova)
-	else if (req.params.nutrition)
-		result = products.filter(product => product.nutrition.score <= req.params.nutrition)
+	let result = []
+	if (req.query.nova && req.query.nutrition)
+		result = products.filter(product => product.nova.score >= req.query.nova && product.nutrition.score <= req.params.nutrition)
+	else if (req.query.nova)
+		result = products.filter(product => product.nova.score >= req.query.nova)
+	else if (req.query.nutrition)
+		result = products.filter(product => product.nutrition.score <= req.query.nutrition)
 	console.log("terminou a filtragem")
-	console.log(products)
+	console.log(result)
 
 	await browser.close()
 
-
-	res.json(products)
+	res.json(result)
 }
 
 function validadeReq(minScoreNutri, scoreNutri, minScoreNova, scoreNova) {
