@@ -1,7 +1,23 @@
 import express from "express"
 import puppeteer from "puppeteer"
 
+/**
+ * 
+ * /products:
+ * 	get:
+ * 		summary: Retorna produtos listados bla bla
+ * 		description:
+ * 		parameters:
+ * 			 - in: query
+ * 				name: nutrition
+ *					description: Filtrar produtos pela nota Nutrition de A até E
+ *					required: false
+ *					type: string
+ */
 export default async function List(req, res) {
+	const novaParam = req.query.nova
+	const nutritionParam = req.query.nutrition
+
 	try {
 		console.log("iniciando captura das informações")
 
@@ -37,15 +53,15 @@ export default async function List(req, res) {
 			})
 		})
 
-		console.log("terminou a captura")
 		let result = []
-		if (req.query.nova && req.query.nutrition)
-			result = products.filter(product => product.nova.score >= req.query.nova && product.nutrition.score <= req.params.nutrition)
-		else if (req.query.nova)
-			result = products.filter(product => product.nova.score >= req.query.nova)
-		else if (req.query.nutrition)
-			result = products.filter(product => product.nutrition.score <= req.query.nutrition)
+		if (novaParam && nutritionParam)
+			result = products.filter(product => product.nova.score >= novaParam && product.nutrition.score <= nutritionParam)
+		else if (novaParam)
+			result = products.filter(product => product.nova.score >= novaParam)
+		else if (reqnutritionParam)
+			result = products.filter(product => product.nutrition.score <= nutritionParam)
 		else result = products
+		console.log(`terminou a captura, ${result.length} produtos encontrados.`)
 
 		await browser.close()
 
