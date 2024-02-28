@@ -33,20 +33,20 @@ export default async function Details(req, res) {
 			let nutrition = {}
 
 			const table = document.querySelector("#panel_nutrition_facts_table_content table")
-			const tableData = [];
+			const tableData = []
 
-			// Loop through table rows (excluding the header)
-			const tableRows = table.querySelectorAll('tbody tr');
-			for (const row of tableRows) {
-				const rowData = {};
+			// ITERANDO SOBRE A TABELA
+			const tableRows = table.querySelectorAll('tbody tr')
+			tableRows.forEach(row => {
+				const rowData = {}
 
-				// Extract data from the first two cells (assuming consistent structure)
+				// EXTRAINDO VALORES DE CADA LINHA (NOME - VALOR)
 				const dataCells = row.querySelectorAll('td');
-				rowData.Nome = dataCells[0].querySelector('span').textContent.trim();
-				rowData.Valor = dataCells[1].querySelector('span').textContent.trim();
+				rowData.Nome = dataCells[0].querySelector('span').textContent.trim()
+				rowData.Valor = dataCells[1].querySelector('span').textContent.trim()
 
-				tableData.push(rowData);
-			}
+				tableData.push(rowData)
+			})
 
 			if (ingredients.list[0].includes(":"))
 				ingredients.list[0] = ingredients.list[0].split(": ")[1]
@@ -56,17 +56,22 @@ export default async function Details(req, res) {
 			if (score) {
 				const listValues = document.querySelectorAll("#panel_nutrient_levels_content ul.accordion")
 
-				await listValues.forEach(async item => {
-					values.push([
-						item.querySelector("a img").src.slice(45).split(".")[0],
-						item.querySelector("a h4").innerText
-					])
-				})
+				if (listValues)
+					listValues.forEach(async item => {
+						values.push([
+							item.querySelector("a img").src.slice(45).split(".")[0],
+							item.querySelector("a h4").innerText
+						])
+					})
+
+				const servingSize = document.querySelector("#panel_serving_size_content .panel_text")?.innerText ?? ""
+				if (servingSize)
+					servingSize.split(": ")[1] ?? ""
 
 				nutrition = {
 					score: score,
 					values: values,
-					servingSize: document.querySelector("#panel_serving_size_content .panel_text").innerText.split(": ")[1],
+					servingSize: servingSize,
 					data: tableData
 				}
 			} else
@@ -90,6 +95,7 @@ export default async function Details(req, res) {
 		else
 			res.status(204).json({})
 	} catch {
+		console.error("erro ao trazer informações do produto")
 		res.status(500).json({})
 	}
 }

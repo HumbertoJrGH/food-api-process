@@ -33,8 +33,8 @@ export default async function List(req, res) {
 			const list = document.querySelectorAll("ul.search_results li")
 
 			return Array.from(list).map((product) => {
-				const id = product.querySelector("a").href.split("/")[4]
-				const name = product.querySelector(".list_product_name").innerText
+				const id = product.querySelector("a")?.href.split("/")[4] ?? ""
+				const name = product.querySelector(".list_product_name")?.innerText ?? ""
 
 				const nutrition = {
 					score: product.querySelector(".list_product_sc img.list_product_icons[title^='Nutri-Score']").title.split(" - ")[0].length == 13
