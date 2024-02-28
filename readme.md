@@ -18,3 +18,4 @@
 ### Rotas
 * **/products** Rota que traz a lista de alimentos do openfoodfacts com seus dados em um array, aceita os parâmetros ```nova``` e ```nutrition``` para filtrar as notas dos alimentos.
 * **/products/:id** Esta rota traz os detalhes do produto especificado pela variável de caminho ```:id``` que pode ser encontrada nos produtos listados da rota anterior.
+* **/docs** Rota da documentação pelo swagger onde é possível testar as rotas.

@@ -13,20 +13,60 @@
   "paths": {
     "/products": {
       "get": {
-        "description": "",
+        "description": "Esta rota traz a lista de produtos alimentícios com suas informações básicas em um array.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "nova",
+            "type": "string",
+            "description": "Rateamento pelo atributo Nova, notas de alimentos de A à E.",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "nutrition",
+            "type": "string",
+            "description": "Rateamento de alimentos de 0 à 10.",
+            "required": false
+          }
+        ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Sucesso ao trazer dados"
+          },
+          "204": {
+            "description": "Nenhum produto encontrado"
+          },
+          "500": {
+            "description": "Erro ao processar informações"
           }
         }
       }
     },
     "/products/{id}": {
       "get": {
-        "description": "",
+        "description": "Rota que trará os detalhes de um produto específico pelo :id informado no caminho da requisição.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "number",
+            "description": "Identificador do produto a ser pesquisado.",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Sucesso ao trazer dados"
+          },
+          "204": {
+            "description": "Nenhum produto encontrado"
+          },
+          "500": {
+            "description": "Erro ao processar informações"
           }
         }
       }
