@@ -58,7 +58,7 @@ export default async function List(req, res) {
 			result = products.filter(product => product.nova.score >= novaParam && product.nutrition.score <= nutritionParam)
 		else if (novaParam)
 			result = products.filter(product => product.nova.score >= novaParam)
-		else if (reqnutritionParam)
+		else if (nutritionParam)
 			result = products.filter(product => product.nutrition.score <= nutritionParam)
 		else result = products
 		console.log(`terminou a captura, ${result.length} produtos encontrados.`)
