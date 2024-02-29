@@ -1,18 +1,6 @@
 import puppeteer from "puppeteer";
-/**
- *
- * /products:
- * 	get:
- * 		summary: Retorna produtos listados bla bla
- * 		description:
- * 		parameters:
- * 			 - in: query
- * 				name: nutrition
- *					description: Filtrar produtos pela nota Nutrition de A até E
- *					required: false
- *					type: string
- */
 export default async function List(req, res) {
+    // PARÂMETROS OPCIONAIS
     const novaParam = req.query.nova;
     const nutritionParam = req.query.nutrition;
     try {
@@ -44,6 +32,7 @@ export default async function List(req, res) {
                 return { id, name, nutrition, nova };
             });
         });
+        // PREPARANDO RESULTADO EM BASE DOS DADOS OBTIDOS PELO WEBSCRAPPING
         let result = [];
         if (novaParam && nutritionParam)
             result = products.filter(product => product.nova.score >= novaParam && product.nutrition.score <= nutritionParam);
@@ -54,13 +43,15 @@ export default async function List(req, res) {
         else
             result = products;
         console.log(`terminou a captura, ${result.length} produtos encontrados.`);
+        // FECHANDO O NAVEGADOR VIRTUAL
         await browser.close();
         if (result.length > 0)
             res.status(200).json(result);
         else
             res.status(204).json([]);
     }
-    catch {
-        res.status(500).json({});
+    catch (err) {
+        console.error("erro ao trazer informações dos produtos");
+        res.status(500).json({ err });
     }
 }

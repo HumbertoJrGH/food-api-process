@@ -13,9 +13,11 @@ export default async function Details(req: Request, res: Response) {
 			waitUntil: "domcontentloaded"
 		})
 
+		// CAPTURANDO INFORMAÇÕES DA PÁGINA
 		const info = await page.evaluate(async () => {
 			const product = document.querySelector("#prodInfos .card-section")
 
+			// CAPTURANDO INFORMAÇÕES BÁSICAS DO PRODUTO E FORMANDO OBJETOS PARA COMPOR JSON FINAL
 			const title = (product && product.querySelector(".title-1")?.innerHTML) ?? null
 			const quantity = (product && product.querySelector("p#field_quantity .field_value")?.innerHTML) ?? null
 
@@ -28,10 +30,7 @@ export default async function Details(req: Request, res: Response) {
 				list: document.querySelector("#panel_ingredients_content .panel_text")?.innerHTML.split(", ")
 			}
 
-			const score = document.querySelector("#panel_nutriscore li a")?.className.split("grade_")[1].toUpperCase()
-
-			let nutrition = {}
-
+			// PREPARANDO TABELA DE DETALHES NUTRICIONAIS
 			const table = document.querySelector("#panel_nutrition_facts_table_content table")
 			const tableData: {
 				Nome: string
@@ -58,6 +57,10 @@ export default async function Details(req: Request, res: Response) {
 				ingredients.list[0] = ingredients.list[0].split(": ")[1]
 
 			const values: [string, string][] = []
+
+			// VALIDA SE TEM SCORE DA NUTRITION DISPONÍVEL PARA CAPTURAR DETALHES
+			const score = document.querySelector("#panel_nutriscore li a")?.className.split("grade_")[1].toUpperCase()
+			let nutrition = {}
 
 			if (score) {
 				const listValues = document.querySelectorAll("#panel_nutrient_levels_content ul.accordion")
@@ -86,7 +89,7 @@ export default async function Details(req: Request, res: Response) {
 					score: "unknown"
 				}
 
-				const img: HTMLImageElement | null = document.querySelector("#panel_nova li a img")
+			const img: HTMLImageElement | null = document.querySelector("#panel_nova li a img")
 			const nova = {
 				score: img?.src.slice(-5).slice(0, 1),
 				title: document.querySelector("#panel_nova a h4")?.innerHTML
@@ -102,8 +105,8 @@ export default async function Details(req: Request, res: Response) {
 			res.status(200).json(info)
 		else
 			res.status(204).json({})
-	} catch {
+	} catch (err) {
 		console.error("erro ao trazer informações do produto")
-		res.status(500).json({})
+		res.status(500).json({ err })
 	}
 }

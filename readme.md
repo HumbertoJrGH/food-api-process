@@ -15,8 +15,12 @@
 ## Setup
 
  Para rodar o projeto basta iniciar um terminal na raiz do projeto e rodar o comando `npm i` ou `yarn install` caso esteja utilizando este gerenciador de pacotes.
+
  Para executar após a instalação basta utilizar ```npm start``` ou ```yarn start``` e acessar as rotas disponíveis.
+
  Uma vez que o projeto estiver rodando basta acessar as rotas disponíveis conforme a documentação para obter os dados dos alimentos obtidos do site `openfoodfacts`.
+ 
+ Caso seja feita alguma alteração no código em typescript é necessário executar o comando ````npx tsc``` para transpilar o código para .js.
 
 ### Rotas
 * **/products** Rota que traz a lista de alimentos do openfoodfacts com seus dados em um array, aceita os parâmetros ```nova``` e ```nutrition``` para filtrar as notas dos alimentos.

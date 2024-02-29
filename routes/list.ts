@@ -1,20 +1,8 @@
 import express, { Request, Response } from "express"
 import puppeteer from "puppeteer"
 
-/**
- * 
- * /products:
- * 	get:
- * 		summary: Retorna produtos listados bla bla
- * 		description:
- * 		parameters:
- * 			 - in: query
- * 				name: nutrition
- *					description: Filtrar produtos pela nota Nutrition de A até E
- *					required: false
- *					type: string
- */
 export default async function List(req: Request, res: Response) {
+	// PARÂMETROS OPCIONAIS
 	const novaParam = req.query.nova
 	const nutritionParam = req.query.nutrition
 
@@ -32,7 +20,7 @@ export default async function List(req: Request, res: Response) {
 		const products = await page.evaluate(() => {
 			const list = document.querySelectorAll("ul.search_results li")
 
-			return Array.from(list).map((product) => {
+			return Array.from(list).map((product: Element) => {
 				const id = product.querySelector("a")?.href.split("/")[4] ?? ""
 				const nameEl: HTMLElement = product.querySelector(".list_product_name") as HTMLElement
 				const name = nameEl?.innerText ?? ""
@@ -54,6 +42,7 @@ export default async function List(req: Request, res: Response) {
 			})
 		})
 
+		// PREPARANDO RESULTADO EM BASE DOS DADOS OBTIDOS PELO WEBSCRAPPING
 		let result = []
 		if (novaParam && nutritionParam)
 			result = products.filter(product => product.nova.score >= novaParam && product.nutrition.score <= nutritionParam)
@@ -64,13 +53,15 @@ export default async function List(req: Request, res: Response) {
 		else result = products
 		console.log(`terminou a captura, ${result.length} produtos encontrados.`)
 
+		// FECHANDO O NAVEGADOR VIRTUAL
 		await browser.close()
 
 		if (result.length > 0)
 			res.status(200).json(result)
 		else
 			res.status(204).json([])
-	} catch {
-		res.status(500).json({})
+	} catch (err) {
+		console.error("erro ao trazer informações dos produtos")
+		res.status(500).json({ err })
 	}
 }
